@@ -1,66 +1,175 @@
-let bienvenido = alert("Bienvenido a la hamburgueseria de Don Mario!")
-let usuarioNombre = prompt("Porfavor Ingrese su Nombre Completo")
-alert("Bienvenido " + usuarioNombre)
+//PARTE DE LOS PRODUCTOS A PINTAR Y DEL JSON
 
-let EdadIngresar = prompt("Ingrese Su Edad Porfavor")
-if(EdadIngresar <= 17 ){
-    alert("Usted es menor De Edad no puede ingresar")
-}else{
-    alert("Usted Cumple la Edad Permitida para Continuar")
+// JSON de Las Hamburguesas
+let productos = `[
+  {
+    "nombre": "ParoCardiaco",
+    "imagen": "../image/Burguer-2.png",
+    "precio": 2200,
+    "ingredientes": "Medallón de Carne, Lechuga, Tomate, Triple Cheddar y Huevo"
+  },
+  {
+    "nombre": "Titan",
+    "imagen": "../image/Burguer-2.png",
+    "precio": 2600,
+    "ingredientes": "Medallón de Carne, Lechuga, Tomate, Triple Cheddar y Huevo"
+  },
+  {
+    "nombre": "MacDorado",
+    "imagen": "../image/Burguer-2.png",
+    "precio": 2800,
+    "ingredientes": "Medallón de Carne, Lechuga, Tomate, Triple Cheddar y Huevo"
+  },
+  {
+    "nombre": "UltimoVuelo",
+    "imagen": "../image/Burguer-2.png",
+    "precio": 3000,
+    "ingredientes": "Medallón de Carne, Lechuga, Tomate, Triple Cheddar y Huevo"
+  },
+  {
+    "nombre": "MacNifica",
+    "imagen": "../image/Burguer-2.png",
+    "precio": 3000,
+    "ingredientes": "Medallón de Carne, Lechuga, Tomate, Triple Cheddar y Huevo"
+  },
+  {
+    "nombre": "TurboCheddar",
+    "imagen": "../image/Burguer-2.png",
+    "precio": 3000,
+    "ingredientes": "Medallón de Carne, Lechuga, Tomate, Triple Cheddar y Huevo"
+  }
+]`;
+
+let pasarProductos = JSON.parse(productos);
+
+//Selecciona la clase "Container" del HTML
+let container = document.getElementsByClassName('container')[0];
+
+let row;
+let rowSize = 2; // Número de productos por fila
+
+pasarProductos.forEach(function(producto, index) {
+  if (index % rowSize === 0) {
+    row = document.createElement('div');
+    row.className = 'row';
+    container.appendChild(row);
+  }
+  //Aca arrancaria a crear Los productos y pintarlos en el html
+  let card = document.createElement('div');
+  card.className = 'card-body';
+  //Creamos el nombre a la tarjeta
+  let nombre = document.createElement('h3');
+  nombre.className = 'card-title';
+  nombre.textContent = producto.nombre;
+  card.appendChild(nombre);
+  //Creamos la imagen
+  let imagen = document.createElement('img');
+  imagen.className = 'card-img';
+  imagen.src = producto.imagen;
+  card.appendChild(imagen);
+  //Creamos La parte de los ingredientes
+  let ingredientes = document.createElement('div');
+  ingredientes.className = 'card-text Descripcion';
+  ingredientes.textContent = producto.ingredientes;
+  card.appendChild(ingredientes);
+  //Creamos el Precio
+  let precio = document.createElement('div');
+  precio.className = 'card-text';
+  precio.textContent = '$' + producto.precio;
+  card.appendChild(precio);
+  //Creamos el Boton de comprar
+  let botonCompra = document.createElement('button');
+  botonCompra.className = 'btn';
+  botonCompra.textContent = 'Comprar';
+  card.appendChild(botonCompra);
+  //Agrega card al Html
+  row.appendChild(card);
+
+  //Darle Funcionalidad a los botones
+  botonCompra.addEventListener('click', function() {
+    AgregarAlCarro(producto);
+    console.log('Compraste el producto:', producto.nombre);
+  });
+});
+
+//-------------------------------------------PARTE DEL CARRITO -------------------------------------------------------------------------------------------
+
+// Array para almacenar los productos en el carrito
+let productosDelCarrito = [];
+
+// Obtener elementos del DOM
+let listaPedidos = document.getElementById("lista-Pedidos");
+let totalPedidos = document.getElementById("total-Pedidos");
+let eliminarContenido = document.getElementById("Eliminar-Contenido");
+
+// Función para agregar un producto al carrito
+function AgregarAlCarro(producto) {
+  productosDelCarrito.push(producto);
+  actualizarLocalStorage();
+  mostrarCarrito();
 }
 
-//INGRESAR PRODUCTOS
-class Hamburguesas{
-    constructor(nombreHamburguesa,IngredientesHamburguesa,PrecioHamburguesa,StockHamburguesa){
-
-        this.nombreHamburguesa = nombreHamburguesa
-        this.IngredientesHamburguesa = IngredientesHamburguesa
-        this.PrecioHamburguesa = PrecioHamburguesa
-        this.StockHamburguesa  = StockHamburguesa
-    }
-}
-//array vacio donde se cargaran las hamburguesas
-let Burguer = []
-
-
-//funcion agregarHamburguesas
-function agregarHamburguesas() {
-    let Continuar = true
-
-    while (Continuar) {
-        let nombreHamburguesa = prompt("Ingrese el nombre de la hamburguesa (o  'NO' para Salir):")
-        if (nombreHamburguesa.toLowerCase() === "NO") {
-            Continuar = false
-        }
-        let IngredientesHamburguesa = prompt("Ingrese los ingredientes de la Hamburguesa")
-        let PrecioHamburguesa = parseFloat(prompt("Cuanto Vale la Hamburguesa?"))
-        let StockHamburguesa = parseInt(prompt("Cuantas hamburguesas hay Disponibles?"))
-
-        //aqui se va a subir la hamburguesa creada al Array Burguer
-        let hamburguesa = new Hamburguesas(nombreHamburguesa,IngredientesHamburguesa,PrecioHamburguesa,StockHamburguesa)
-        Burguer.push(hamburguesa)
-
-        //aca se pregunta si se desea continuar agregando hamburguesas
-        Continuar = confirm("¿Desea agregar más hamburguesas?")
-    }
-}
-agregarHamburguesas();
-
-// Aca se ven las hamburguesas ingresadas
-let mensaje = "";
-
-// Se recorre el array y se muestra el producto
-for (let i = 0; i < Burguer.length; i++) {
-  mensaje += `Nombre de la hamburguesa: ${Burguer[i].nombreHamburguesa}\n`;
-  mensaje += `Ingredientes: ${Burguer[i].IngredientesHamburguesa}\n`;
-  mensaje += `Precio: ${Burguer[i].PrecioHamburguesa}\n`;
-  mensaje += `Stock: ${Burguer[i].StockHamburguesa}\n\n`;
+// Función para eliminar un producto del carrito
+function removeFromCart(index) {
+  productosDelCarrito.splice(index, 1);
+  actualizarLocalStorage();
+  mostrarCarrito();
 }
 
-// Alerta donde se muestran las hamburguesas ingresadas con un salto de linea
-alert("Las hamburguesas ingresadas son:\n" + mensaje);
+// Función para mostrar el carrito 
+function mostrarCarrito() {
+  listaPedidos.innerHTML = "";
+  let total = 0;
 
+  for (let i = 0; i < productosDelCarrito.length; i++) {
+    let item = productosDelCarrito[i];
+    
+    // Crear Lista donde se listen el producto comprado con su precio
+    let listaItem = document.createElement("li");
+    listaItem.className = "List-Style"
+    listaItem.textContent = item.nombre + " - $" + item.precio;
+    
+    // Crear Boton de Eliminar
+    let removerboton = document.createElement("button");
+    removerboton.className = "Delete"
+    removerboton.textContent = "Desechar";
+    removerboton.addEventListener("click", function(index) {
+      return function() {
+        removeFromCart(index);
+      };
+    }(i));
 
+    // Se agregan la lista creada y el Boton de eliminar
+    listaItem.appendChild(removerboton);
+    listaPedidos.appendChild(listaItem);
 
-//Despedida de la tienda
-let Chau = confirm("Sus Hamburguesas Fueron Cargadas con exito, si desea cargar mas recargue la pagina")
+    total += item.precio;
+  }
+  
+  // Se muestra el total de los productos cargados
+  totalPedidos.textContent = "El total de productos es: $" + total;
+}
+
+// Función para actualizar el localStorage
+function actualizarLocalStorage() {
+  localStorage.setItem("cartItems", JSON.stringify(productosDelCarrito));
+}
+
+// Función para cargar los productos del localStorage
+function cargarLocalStorage() {
+  const datosDelCarrito = localStorage.getItem("cartItems");
+  if (datosDelCarrito) {
+    productosDelCarrito = JSON.parse(datosDelCarrito);
+    mostrarCarrito();
+  }
+}
+
+// Event listener para vaciar el carrito
+eliminarContenido.addEventListener("click", function() {
+  productosDelCarrito = [];
+  actualizarLocalStorage();
+  mostrarCarrito();
+});
+
+// Cargar los productos del localStorage al cargar la página
+window.addEventListener("load", cargarLocalStorage);
